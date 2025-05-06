@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruby AI - Your Intelligent Discord Assistant</title>
+    <style>
+        :root {
+            --primary: #e91e63;
+            --secondary: #9c27b0;
+            --dark: #1a1a1a;
+            --light: #f5f5f5;
+            --gray: #333;
+            --light-gray: #ddd;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .logo img {
+            height: 80px;
+            width: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo h1 {
+            margin-left: 20px;
+            font-size: 2.5rem;
+            color: white;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        .invite-btn {
+            display: inline-block;
+            background-color: white;
+            color: var(--primary);
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .invite-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Sections */
+        section {
+            padding: 60px 0;
+        }
+        
+        section:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.2rem;
+            position: relative;
+            color: var(--primary);
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            margin: 15px auto 0;
+            border-radius: 2px;
+        }
+        
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        /* Commands */
+        .commands-container {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .command-category {
+            margin-bottom: 30px;
+        }
+        
+        .category-title {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 15px 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .category-title::before {
+            content: '+';
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .category-title.active::before {
+            content: '-';
+        }
+        
+        .commands-list {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        .category-title.active + .commands-list {
+            padding: 20px;
+            max-height: 1000px;
+        }
+        
+        .command {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .command-name {
+            color: var(--primary);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .command-desc {
+            color: var(--light-gray);
+            flex: 1;
+        }
+        
+        /* About */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .about-text {
+            line-height: 1.8;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .stat {
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .about-image img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 30px 0;
+            text-align: center;
+        }
+        
+        .social-links {
+            margin-bottom: 20px;
+        }
+        
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: var(--light);
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            color: var(--primary);
+        }
+        
+        .copyright {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo h1 {
+                font-size: 2rem;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .about-image {
+                order: -1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <!-- Replace with your bot's avatar -->
+                <img src="Flux_Dev_Simple_logo_of_a_blackgrey_modern_background_and_in_t_1.jpg" alt="Ruby AI Logo">
+                <h1>Ruby AI</h1>
+            </div>
+            <p class="tagline">Your intelligent, multi-purpose Discord assistant</p>
+            <a href="https://discord.com/oauth2/authorize?client_id=1357089114213584957&permissions=8&integration_type=0&scope=bot" class="invite-btn">Invite to Server</a>
+        </div>
+    </header>
+    
+    <section id="features">
+        <div class="container">
+            <h2 class="section-title">Amazing Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3 class="feature-title">AI-Powered</h3>
+                    <p>Ruby AI uses Google's powerful Gemini 2.0 Flash, an AI so powerful that creates you understandable text and can even solve your math problems!</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎮</div>
+                    <h3 class="feature-title">Games & Fun</h3>
+                    <p>Ruby explains chunks of your favorite game's wiki and makes your day! Just tell Ruby what to explain, and you will become a game fan in seconds!</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">Fast</h3>
+                    <p>Ruby takes at least 1 second to respond with the fastest Google's AI, Gemini.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3 class="feature-title">Modern and new</h3>
+                    <p>This AI is so new that is ready for new challenges and math problems! Help with homework, studying, and more.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="commands">
+        <div class="container">
+            <h2 class="section-title">FAQ</h2>
+            <div class="commands-container">
+                <div class="command-category">
+                    <div class="category-title">Is it 24/7?</div>
+                    <div class="commands-list">
+                        <div class="command">
+                            <span class="command-name">No</span>
+                            <span class="command-desc">Unafortunately, Ruby doesn't support 24/7.</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-category">
+                    <div class="category-title">Is it active in DMs?</div>
+                    <div class="commands-list">
+                        <div class="command">
+                            <span class="command-name">No</span>
+                            <span class="command-desc">No worries, Ruby has a chance to respond in DMs soon!</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-category">
+                    <div class="category-title">Will it have commands?</div>
+                    <div class="commands-list">
+                        <div class="command">
+                            <span class="command-name">Yes</span>
+                            <span class="command-desc">Ruby is likely to have commands.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="about">
+        <div class="container">
+            <h2 class="section-title">About Ruby AI</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Ruby AI is an advanced, multi-purpose Discord bot designed to enhance your server experience. With a focus on natural language understanding and powerful features, Ruby brings intelligence and fun to your community.</p>
+                    <p>Developed with cutting-edge AI technology, Ruby can understand context, remember conversations, and provide meaningful interactions that go beyond simple command responses.</p>
+                    <p>Learn and have fun chatting with Ruby AI, your all-day companion, forever.</p>
+                </div>
+                <div class="about-image">
+                    <!-- Replace with your bot's screenshot -->
+                    <img src="rubyai.png" alt="Ruby AI in action">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="https://discord.com/oauth2/authorize?client_id=1357089114213584957&permissions=8&integration_type=0&scope=bot" title="Discord"><i>Add</i></a>
+                <a href="terms.html" title="Discord"><i>ToS</i></a>
+                <a href="policy.html" title="Discord"><i>Privacy Policy</i></a>
+            </div>
+            <p class="copyright">© 2025 Ruby AI. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Toggle command categories
+        document.querySelectorAll('.category-title').forEach(title => {
+            title.addEventListener('click', () => {
+                title.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>
